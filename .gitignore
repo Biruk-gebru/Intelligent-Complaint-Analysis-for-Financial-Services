@@ -31,6 +31,6 @@ ENV/
 
 # Project specific
 
-data/raw/
+data/
 vector_store/
 import_files/
