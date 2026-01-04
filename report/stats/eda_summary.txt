@@ -1,0 +1,19 @@
+EDA Summary Statistics
+======================
+
+Total Complaints: 66708
+
+Complaints by Product:
+Product
+Credit card        65272
+Money transfers     1436
+
+Narrative Length Statistics:
+count    66708.000000
+mean       203.466496
+std        221.012658
+min          2.000000
+25%         69.000000
+50%        146.000000
+75%        265.000000
+max       6469.000000
