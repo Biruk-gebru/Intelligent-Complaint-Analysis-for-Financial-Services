@@ -30,7 +30,7 @@ ENV/
 .vscode/
 
 # Project specific
-TASKS.md
+
 data/raw/
 vector_store/
 import_files/
