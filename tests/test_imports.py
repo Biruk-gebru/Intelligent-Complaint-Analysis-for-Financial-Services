@@ -9,8 +9,8 @@ class TestImports(unittest.TestCase):
     def test_imports(self):
         """Simple test to verify modules can be imported."""
         try:
-            from src.chunking import ChunkingStrategy
-            from src.embedding import EmbeddingManager
+            from src.chunking import create_text_chunks
+            from src.embedding import generate_embeddings
             from src.vector_store_builder import FAISSVectorStore
             from src.rag.pipeline import RAGSystem
             self.assertTrue(True)
