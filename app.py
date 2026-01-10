@@ -91,11 +91,7 @@ demo = gr.ChatInterface(
         "How long does a money transfer take?",
         "What should I do if my credit card was charged incorrectly?",
         "Why is my savings account showing unexpected fees?"
-    ],
-    theme=gr.themes.Soft(),
-    retry_btn=None,
-    undo_btn="↩️ Delete Previous",
-    clear_btn="🗑️ Clear Chat"
+    ]
 )
 
 if __name__ == "__main__":
