@@ -1,0 +1,10 @@
+Stage,Metric,Value
+Sampling,Total Samples,12000
+Sampling,Count (Credit card),11742
+Sampling,Count (Money transfers),258
+Chunking,Total Chunks,40723
+Chunking,Avg Chunk Length (chars),337.17
+Chunking,Avg Chunks per Complaint,3.39
+Embedding,Total Embeddings,40723
+Embedding,Embedding Dimension,384
+Vector Store,Index Created,Yes
