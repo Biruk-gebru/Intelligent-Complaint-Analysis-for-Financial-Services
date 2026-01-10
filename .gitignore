@@ -34,3 +34,10 @@ ENV/
 data/
 vector_store/
 import_files/
+logs/
+
+# Markdown files (except README and TASKS)
+*.md
+!README.md
+!TASKS.md
+
