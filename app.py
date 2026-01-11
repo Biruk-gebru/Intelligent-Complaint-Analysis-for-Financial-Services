@@ -5,7 +5,9 @@ import json
 from datetime import datetime
 
 # Initialize RAG System
-vector_store_path = "vector_store/faiss_index"
+# Use absolute path to ensure it works regardless of where the script is run from
+base_dir = os.path.dirname(os.path.abspath(__file__))
+vector_store_path = os.path.join(base_dir, "vector_store", "faiss_index")
 
 # Check if vector store exists
 if not os.path.exists(vector_store_path):
@@ -32,19 +34,15 @@ def log_interaction(query, response):
     with open("logs/chat_interactions.jsonl", "a") as f:
         f.write(json.dumps(log_entry) + "\n")
 
-def chat_interface(message, history):
+def process_query(message, history):
     """
-    Process user message and return response with sources.
-    
-    Args:
-        message: User's question
-        history: Chat history (list of [user_msg, bot_msg])
-    
-    Returns:
-        Formatted response with answer and sources
+    Process user message and return updated history.
     """
     if not message or message.strip() == "":
-        return "Please enter a question."
+        return "", history
+    
+    # Append user message to history
+    history.append({"role": "user", "content": message})
     
     try:
         # Query RAG system
@@ -65,39 +63,85 @@ def chat_interface(message, history):
             text_preview = src.get('text', '')[:150]
             formatted_response += f"\n{i}. **{company}** - {product}\n"
             formatted_response += f"   _{text_preview}..._\n"
-        
-        return formatted_response
+            
+        history.append({"role": "assistant", "content": formatted_response})
+        return "", history
     
     except Exception as e:
-        return f"❌ Error processing your query: {str(e)}\n\nPlease try again or rephrase your question."
+        error_msg = f"❌ Error processing your query: {str(e)}\n\nPlease try again or rephrase your question."
+        history.append({"role": "assistant", "content": error_msg})
+        return "", history
 
-# Create Gradio Interface
-demo = gr.ChatInterface(
-    fn=chat_interface,
-    title="💬 CrediTrust Complaint Analysis Assistant",
-    description="""
-    Ask questions about consumer complaints related to:
-    - 💳 Credit cards
-    - 💰 Personal loans
-    - 🏦 Savings accounts
-    - 💸 Money transfers
+def clear_history():
+    """Clear the chat history."""
+    return [], ""
+
+# Create Gradio Blocks Interface
+with gr.Blocks() as demo:
+    gr.Markdown(
+        """
+        # 💬 CrediTrust Complaint Analysis Assistant
+        
+        Ask questions about consumer complaints related to:
+        - 💳 Credit cards
+        - 💰 Personal loans
+        - 🏦 Savings accounts
+        - 💸 Money transfers
+        
+        This AI assistant uses a RAG (Retrieval-Augmented Generation) system to provide answers based on real consumer complaints from the CFPB database.
+        """
+    )
     
-    This AI assistant uses a RAG (Retrieval-Augmented Generation) system to provide answers based on real consumer complaints from the CFPB database.
-    """,
-    examples=[
-        "Why was my loan denied?",
-        "How do I dispute a charge on my credit card?",
-        "What are common issues with savings accounts?",
-        "How long does a money transfer take?",
-        "What should I do if my credit card was charged incorrectly?",
-        "Why is my savings account showing unexpected fees?"
-    ]
-)
+    chatbot = gr.Chatbot(height=500, label="Conversation History")
+    
+    with gr.Row():
+        msg = gr.Textbox(
+            placeholder="Type your question here (e.g., 'Why was my loan denied?')...",
+            scale=4,
+            label="Your Question"
+        )
+        submit_btn = gr.Button("Submit", variant="primary", scale=1)
+    
+    with gr.Row():
+        clear_btn = gr.Button("🗑️ Clear Chat & Reset", variant="secondary")
+        
+    gr.Examples(
+        examples=[
+            "Why was my loan denied?",
+            "How do I dispute a charge on my credit card?",
+            "What are common issues with savings accounts?",
+            "How long does a money transfer take?",
+            "What should I do if my credit card was charged incorrectly?",
+            "Why is my savings account showing unexpected fees?"
+        ],
+        inputs=msg,
+        label="Example Queries (Click to try)"
+    )
+
+    # Event handlers
+    submit_btn.click(
+        fn=process_query,
+        inputs=[msg, chatbot],
+        outputs=[msg, chatbot]
+    )
+    
+    msg.submit(
+        fn=process_query,
+        inputs=[msg, chatbot],
+        outputs=[msg, chatbot]
+    )
+    
+    clear_btn.click(
+        fn=clear_history,
+        inputs=[],
+        outputs=[chatbot, msg]
+    )
 
 if __name__ == "__main__":
     demo.launch(
         share=False, 
         server_name="0.0.0.0", 
         server_port=7860,
-        show_error=True
+        show_error=True,
+        theme=gr.themes.Soft()
     )
