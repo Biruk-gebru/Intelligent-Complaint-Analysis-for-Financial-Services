@@ -181,7 +181,7 @@ python app.py
 
 ### 📸 Interactive UI Screenshot
 
-![RAG Chat Interface](report/images/Rag.png)
+![RAG Chat Interface](report/images/Gradio.png)
 
 *The Gradio chat interface provides an intuitive way to query the RAG system. Users can type questions, see example queries, and receive answers with source attribution showing the top 3 relevant complaint sources.*
 

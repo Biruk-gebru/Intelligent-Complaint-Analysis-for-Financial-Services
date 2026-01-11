@@ -333,8 +333,8 @@ def generate_report():
     elements.append(Spacer(1, 0.1*inch))
     
     # Add UI screenshot
-    if os.path.exists('report/images/Rag.png'):
-        img = Image('report/images/Rag.png', width=6*inch, height=3.5*inch)
+    if os.path.exists('report/images/Gradio.png'):
+        img = Image('report/images/Gradio.png', width=6*inch, height=3.5*inch)
         elements.append(img)
         elements.append(Paragraph(
             "<i>Figure 3: Interactive Gradio chat interface showing query input, example questions, and answer with source attribution</i>",
